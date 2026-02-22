@@ -13,7 +13,7 @@
     body {
       margin: 0;
       padding: 0;
-      background: #111827;
+      background: #020617;
       color: #e5e7eb;
       display: flex;
       justify-content: center;
@@ -21,65 +21,67 @@
 
     .container {
       width: 100%;
-      max-width: 960px;
-      padding: 16px;
+      max-width: 720px;
+      padding: 12px;
       box-sizing: border-box;
-    }
-
-    h1 {
-      margin-top: 0;
-      font-size: 1.5rem;
     }
 
     .card {
       background: #020617;
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 16px;
       box-shadow: 0 15px 30px rgba(0,0,0,0.5);
       border: 1px solid #1f2937;
     }
 
-    label {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 0.9rem;
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.4rem;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
       color: #9ca3af;
+      margin-bottom: 12px;
     }
 
-    textarea {
-      width: 100%;
-      min-height: 200px;
-      resize: vertical;
+    .help-toggle {
+      font-size: 0.85rem;
+      color: #60a5fa;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .help-box {
+      margin-top: 8px;
+      margin-bottom: 12px;
       padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #4b5563;
-      background: #020617;
-      color: #e5e7eb;
-      box-sizing: border-box;
-      font-family: inherit;
-      font-size: 0.9rem;
+      border-radius: 12px;
+      background: #0b1120;
+      border: 1px solid #1f2937;
+      font-size: 0.8rem;
+      line-height: 1.4;
     }
 
-    textarea:focus {
-      outline: none;
-      border-color: #60a5fa;
-      box-shadow: 0 0 0 1px #60a5fa60;
+    .help-box ol {
+      padding-left: 1.1rem;
+      margin: 4px 0;
     }
 
     .row {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       align-items: center;
       flex-wrap: wrap;
-      margin-top: 8px;
-      margin-bottom: 8px;
+      margin-top: 4px;
+      margin-bottom: 4px;
     }
 
     .tone-select {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
 
     .tone-option {
@@ -91,31 +93,79 @@
       border: 1px solid #374151;
       cursor: pointer;
       user-select: none;
+      background: #020617;
     }
 
     .tone-option input {
       accent-color: #60a5fa;
     }
 
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+      color: #e5e7eb;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    textarea::placeholder {
+      color: #6b7280;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 1px #60a5fa60;
+    }
+
     .stats {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: #9ca3af;
       margin-left: auto;
     }
 
     button {
-      padding: 8px 16px;
-      border-radius: 999px;
       border: none;
-      background: #2563eb;
-      color: white;
-      font-weight: 600;
+      border-radius: 999px;
       cursor: pointer;
       font-size: 0.9rem;
+      font-weight: 600;
+      padding: 10px 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-sizing: border-box;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+      flex: 1;
+    }
+
+    .btn-secondary {
+      background: #111827;
+      color: #e5e7eb;
+      border: 1px solid #374151;
+      min-width: 110px;
     }
 
     button:disabled {
-      opacity: 0.4;
+      opacity: 0.5;
       cursor: default;
     }
 
@@ -140,7 +190,7 @@
     .reply-btn {
       text-align: left;
       border-radius: 999px;
-      padding: 8px 12px;
+      padding: 10px 12px;
       background: #020617;
       border: 1px solid #374151;
       font-size: 0.85rem;
@@ -171,7 +221,7 @@
       border-radius: 999px;
       border: 1px solid #374151;
       padding: 2px 8px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #9ca3af;
     }
 
@@ -182,31 +232,113 @@
       background: #22c55e;
     }
 
+    /* 初回用モーダル */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .modal {
+      background: #020617;
+      border-radius: 16px;
+      border: 1px solid #374151;
+      padding: 16px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+      font-size: 0.9rem;
+    }
+
+    .modal h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+
+    .modal ol {
+      margin: 4px 0 8px;
+      padding-left: 1.2rem;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
     @media (max-width: 640px) {
       .card {
         padding: 12px;
       }
-      button {
-        width: 100%;
-        justify-content: center;
-      }
       .row {
-        justify-content: flex-start;
+        flex-direction: column;
+        align-items: stretch;
       }
       .stats {
         width: 100%;
         text-align: right;
       }
+      .btn-primary {
+        width: 100%;
+      }
+      .btn-secondary {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- 初回説明モーダル -->
+  <div id="guideModal" class="modal-backdrop">
+    <div class="modal">
+      <h2>かんたん3ステップ</h2>
+      <ol>
+        <li>LINEでトーク画面を開きます。</li>
+        <li>画面を長押しして「すべて選択」→「コピー」。</li>
+        <li>この画面にもどって、下の「📋 貼り付け」を押して「生成」。</li>
+      </ol>
+      <p style="font-size:0.8rem;color:#9ca3af;">
+        返信候補をタップすると、文章がコピーされます。あとはLINEに貼り付けるだけです。
+      </p>
+      <div class="modal-buttons">
+        <button id="modalOnceBtn" class="btn-secondary" type="button">
+          次から表示しない
+        </button>
+        <button id="modalCloseBtn" class="btn-primary" type="button">
+          はじめる
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <div class="card">
       <h1>LINEトーク要約＆返信生成</h1>
+      <div class="subtitle">
+        トークをそのままコピペすると、要約と返信候補3つを作ります。
+        <span id="helpToggle" class="help-toggle">使い方を見る</span>
+      </div>
+
+      <div id="helpBox" class="help-box" style="display:none;">
+        <strong>LINEからの使い方</strong>
+        <ol>
+          <li>LINEでトーク画面を開きます。</li>
+          <li>画面を長押し →「すべて選択」→「コピー」。</li>
+          <li>この画面にもどって「📋 貼り付け」を押します。</li>
+          <li>トーン（standard / night / business）を選んで「要約＆返信を生成」。</li>
+          <li>返信候補をタップしてコピーし、LINEに貼り付けて送ります。</li>
+        </ol>
+      </div>
+
       <div class="row">
         <div class="tone-select">
-          <span style="font-size:0.85rem;color:#9ca3af;">トーン:</span>
+          <span style="font-size:0.8rem;color:#9ca3af;">トーン:</span>
           <label class="tone-option">
             <input type="radio" name="tone" value="standard" checked />
             <span>standard</span>
@@ -225,26 +357,35 @@
         </div>
       </div>
 
-      <label for="inputText">トーク履歴（そのままコピペ）</label>
-      <textarea id="inputText" placeholder="LINEのトーク履歴をコピペしてください"></textarea>
+      <label for="inputText">① LINEのトークをここに入れる</label>
+      <textarea
+        id="inputText"
+        placeholder="LINEのトーク画面を長押し →「すべて選択」→「コピー」して、&#10;下の「📋 貼り付け」ボタンを押すとここに入ります。"
+      ></textarea>
 
-      <div class="row" style="margin-top:12px;">
-        <button id="generateBtn">要約＆返信を生成</button>
-        <span class="badge">
-          <span class="badge-dot"></span>
-          <span>Backend: same origin /api/talk/assist</span>
-        </span>
+      <div class="row" style="margin-top:10px;">
+        <button id="pasteBtn" class="btn-secondary" type="button">
+          📋 貼り付け
+        </button>
+        <button id="generateBtn" class="btn-primary" type="button">
+          ✨ 要約＆返信を生成
+        </button>
       </div>
 
       <div class="status" id="status"></div>
 
+      <div class="badge" style="margin-top:4px;">
+        <span class="badge-dot"></span>
+        <span>この画面のまま使えます（インストール不要）</span>
+      </div>
+
       <div class="result" id="result" style="display:none;">
         <div class="summary">
-          <strong>要約</strong><br />
+          <strong>② 会話の要約</strong><br />
           <span id="summaryText"></span>
         </div>
         <div class="replies">
-          <strong style="font-size:0.9rem;">返信候補</strong>
+          <strong style="font-size:0.9rem;">③ 送りたい文章を選んでコピー</strong>
           <button class="reply-btn" data-index="0"></button>
           <button class="reply-btn" data-index="1"></button>
           <button class="reply-btn" data-index="2"></button>
@@ -257,10 +398,16 @@
     const textarea = document.getElementById('inputText');
     const charCount = document.getElementById('charCount');
     const generateBtn = document.getElementById('generateBtn');
+    const pasteBtn = document.getElementById('pasteBtn');
     const statusEl = document.getElementById('status');
     const resultEl = document.getElementById('result');
     const summaryText = document.getElementById('summaryText');
     const replyButtons = document.querySelectorAll('.reply-btn');
+    const helpToggle = document.getElementById('helpToggle');
+    const helpBox = document.getElementById('helpBox');
+    const guideModal = document.getElementById('guideModal');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalOnceBtn = document.getElementById('modalOnceBtn');
 
     // 文字数カウント
     textarea.addEventListener('input', () => {
@@ -276,18 +423,67 @@
       return 'standard';
     }
 
+    // 使い方トグル
+    helpToggle.addEventListener('click', () => {
+      const visible = helpBox.style.display !== 'none';
+      helpBox.style.display = visible ? 'none' : 'block';
+      helpToggle.textContent = visible ? '使い方を見る' : '使い方を閉じる';
+    });
+
+    // 初回モーダル表示制御
+    function openGuideModal() {
+      guideModal.style.display = 'flex';
+    }
+    function closeGuideModal() {
+      guideModal.style.display = 'none';
+    }
+
+    if (!localStorage.getItem('talkAssistGuideHidden')) {
+      // 初回だけ少し遅らせて表示
+      setTimeout(openGuideModal, 400);
+    }
+
+    modalCloseBtn.addEventListener('click', () => {
+      closeGuideModal();
+    });
+    modalOnceBtn.addEventListener('click', () => {
+      localStorage.setItem('talkAssistGuideHidden', '1');
+      closeGuideModal();
+    });
+
+    // クリップボードから貼り付け
+    async function pasteFromClipboard() {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (!text) {
+          statusEl.textContent = 'コピーされたテキストが見つかりません。LINE側でコピーされているか確認してください。';
+          return;
+        }
+        textarea.value = text;
+        charCount.textContent = text.length;
+        statusEl.textContent = 'LINEからのテキストを貼り付けました。';
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = '自動貼り付けが許可されていません。長押しして手動で貼り付けてください。';
+      }
+    }
+
+    pasteBtn.addEventListener('click', () => {
+      pasteFromClipboard();
+    });
+
     async function callApi() {
       const text = textarea.value.trim();
       if (!text) {
-        statusEl.textContent = 'トーク履歴を入力してください。';
+        statusEl.textContent = 'まずLINEのトークを貼り付けてください。';
         return;
       }
 
       generateBtn.disabled = true;
-      statusEl.textContent = '生成中...';
+      pasteBtn.disabled = true;
+      statusEl.textContent = '生成中です...（数秒〜十数秒かかることがあります）';
       resultEl.style.display = 'none';
 
-      // 同一オリジンの /api/talk/assist を叩く
       const url = '/api/talk/assist';
 
       try {
@@ -305,7 +501,7 @@
         if (!res.ok) {
           const bodyText = await res.text();
           console.error('API error', res.status, bodyText);
-          statusEl.textContent = `APIエラー: ${res.status}`;
+          statusEl.textContent = `AI呼び出しエラー: ${res.status}`;
           return;
         }
 
@@ -314,19 +510,25 @@
 
         const replies = data.replies || [];
         replyButtons.forEach((btn, idx) => {
-          const text = replies[idx] || '';
-          btn.textContent = text || `返信候補${idx + 1}（未生成）`;
-          btn.disabled = !text;
+          const t = replies[idx] || '';
+          if (t) {
+            btn.textContent = t;
+            btn.disabled = false;
+          } else {
+            btn.textContent = `返信候補${idx + 1}（未生成）`;
+            btn.disabled = true;
+          }
           btn.classList.remove('copied');
         });
 
         resultEl.style.display = 'block';
-        statusEl.textContent = '生成完了。返信ボタンをタップするとコピーできます。';
+        statusEl.textContent = '返信候補をタップするとコピーされます。LINEに貼り付けて送ってください。';
       } catch (err) {
         console.error(err);
-        statusEl.textContent = '通信エラーが発生しました。時間をおいて再試行してください。';
+        statusEl.textContent = '通信エラーが発生しました。電波状況を確認して、もう一度お試しください。';
       } finally {
         generateBtn.disabled = false;
+        pasteBtn.disabled = false;
       }
     }
 
@@ -344,10 +546,10 @@
           await navigator.clipboard.writeText(text);
           replyButtons.forEach((b) => b.classList.remove('copied'));
           btn.classList.add('copied');
-          statusEl.textContent = '返信案をクリップボードにコピーしました。';
+          statusEl.textContent = '返信案をコピーしました。LINEに貼り付けてください。';
         } catch (err) {
           console.error(err);
-          statusEl.textContent = 'コピーに失敗しました。手動で選択してください。';
+          statusEl.textContent = 'コピーに失敗しました。文章を長押しして選択してください。';
         }
       });
     });
