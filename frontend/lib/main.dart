@@ -30,6 +30,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+const String apiBaseUrl = 'https://talk-assist-backend.onrender.com';
+
 class _HomePageState extends State<HomePage> {
   String _text = '';
   String _summary = '';
@@ -49,30 +51,30 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    // アプリ起動中に共有された場合
-    ReceiveSharingIntent.getTextStream().listen(
-      (String? value) {
-        if (value != null && value.isNotEmpty) {
-          setState(() {
-            _text = value;
-            _textController.text = value;
-          });
-        }
-      },
-      onError: (err) {
-        // ログ取りたければここで print(err);
-      },
-    );
+    // // アプリ起動中に共有された場合
+    // ReceiveSharingIntent.getTextStream().listen(
+    //   (String? value) {
+    //     if (value != null && value.isNotEmpty) {
+    //       setState(() {
+    //         _text = value;
+    //         _textController.text = value;
+    //       });
+    //     }
+    //   },
+    //   onError: (err) {
+    //     // ログ取りたければここで print(err);
+    //   },
+    // );
 
-    // アプリが完全終了状態から共有で起動した場合
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      if (value != null && value.isNotEmpty) {
-        setState(() {
-          _text = value;
-          _textController.text = value;
-        });
-      }
-    });
+    // // アプリが完全終了状態から共有で起動した場合
+    // ReceiveSharingIntent.getInitialText().then((String? value) {
+    //   if (value != null && value.isNotEmpty) {
+    //     setState(() {
+    //       _text = value;
+    //       _textController.text = value;
+    //     });
+    //   }
+    // });
   }
 
   @override
@@ -252,7 +254,8 @@ class _HomePageState extends State<HomePage> {
     });
 
     try {
-      final uri = Uri.parse('http://localhost:8000/api/talk/assist');
+      final uri = Uri.parse('$apiBaseUrl/api/talk/assist');
+      // final uri = Uri.parse('http://localhost:8000/api/talk/assist');
       // 実機用: adb reverse tcp:8000 tcp:8000
       // エミュレータ用に切り替える場合は下記:
       // final uri = Uri.parse('http://10.0.2.2:8000/api/talk/assist');

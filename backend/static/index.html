@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>LINEトーク要約＆返信生成</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color-scheme: light dark;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #111827;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.5rem;
+    }
+
+    .card {
+      background: #020617;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+      border: 1px solid #1f2937;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      resize: vertical;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 1px #60a5fa60;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tone-select {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+    }
+
+    .tone-option {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tone-option input {
+      accent-color: #60a5fa;
+    }
+
+    .stats {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-left: auto;
+    }
+
+    button {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .result {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #1f2937;
+    }
+
+    .summary {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      white-space: pre-wrap;
+    }
+
+    .replies {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .reply-btn {
+      text-align: left;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #020617;
+      border: 1px solid #374151;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: normal;
+    }
+
+    .reply-btn:hover {
+      background: #111827;
+    }
+
+    .reply-btn.copied {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 1px #22c55e60;
+    }
+
+    .status {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      min-height: 1.2em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 12px;
+      }
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+      .row {
+        justify-content: flex-start;
+      }
+      .stats {
+        width: 100%;
+        text-align: right;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>LINEトーク要約＆返信生成</h1>
+      <div class="row">
+        <div class="tone-select">
+          <span style="font-size:0.85rem;color:#9ca3af;">トーン:</span>
+          <label class="tone-option">
+            <input type="radio" name="tone" value="standard" checked />
+            <span>standard</span>
+          </label>
+          <label class="tone-option">
+            <input type="radio" name="tone" value="night" />
+            <span>night（営業）</span>
+          </label>
+          <label class="tone-option">
+            <input type="radio" name="tone" value="business" />
+            <span>business</span>
+          </label>
+        </div>
+        <div class="stats">
+          <span id="charCount">0</span> / 8000 文字
+        </div>
+      </div>
+
+      <label for="inputText">トーク履歴（そのままコピペ）</label>
+      <textarea id="inputText" placeholder="LINEのトーク履歴をコピペしてください"></textarea>
+
+      <div class="row" style="margin-top:12px;">
+        <button id="generateBtn">要約＆返信を生成</button>
+        <span class="badge">
+          <span class="badge-dot"></span>
+          <span>Backend: same origin /api/talk/assist</span>
+        </span>
+      </div>
+
+      <div class="status" id="status"></div>
+
+      <div class="result" id="result" style="display:none;">
+        <div class="summary">
+          <strong>要約</strong><br />
+          <span id="summaryText"></span>
+        </div>
+        <div class="replies">
+          <strong style="font-size:0.9rem;">返信候補</strong>
+          <button class="reply-btn" data-index="0"></button>
+          <button class="reply-btn" data-index="1"></button>
+          <button class="reply-btn" data-index="2"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const textarea = document.getElementById('inputText');
+    const charCount = document.getElementById('charCount');
+    const generateBtn = document.getElementById('generateBtn');
+    const statusEl = document.getElementById('status');
+    const resultEl = document.getElementById('result');
+    const summaryText = document.getElementById('summaryText');
+    const replyButtons = document.querySelectorAll('.reply-btn');
+
+    // 文字数カウント
+    textarea.addEventListener('input', () => {
+      const len = textarea.value.length;
+      charCount.textContent = len.toString();
+    });
+
+    function getTone() {
+      const radios = document.querySelectorAll('input[name="tone"]');
+      for (const r of radios) {
+        if (r.checked) return r.value;
+      }
+      return 'standard';
+    }
+
+    async function callApi() {
+      const text = textarea.value.trim();
+      if (!text) {
+        statusEl.textContent = 'トーク履歴を入力してください。';
+        return;
+      }
+
+      generateBtn.disabled = true;
+      statusEl.textContent = '生成中...';
+      resultEl.style.display = 'none';
+
+      // 同一オリジンの /api/talk/assist を叩く
+      const url = '/api/talk/assist';
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: text,
+            tone: getTone(),
+          }),
+        });
+
+        if (!res.ok) {
+          const bodyText = await res.text();
+          console.error('API error', res.status, bodyText);
+          statusEl.textContent = `APIエラー: ${res.status}`;
+          return;
+        }
+
+        const data = await res.json();
+        summaryText.textContent = data.summary || '';
+
+        const replies = data.replies || [];
+        replyButtons.forEach((btn, idx) => {
+          const text = replies[idx] || '';
+          btn.textContent = text || `返信候補${idx + 1}（未生成）`;
+          btn.disabled = !text;
+          btn.classList.remove('copied');
+        });
+
+        resultEl.style.display = 'block';
+        statusEl.textContent = '生成完了。返信ボタンをタップするとコピーできます。';
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = '通信エラーが発生しました。時間をおいて再試行してください。';
+      } finally {
+        generateBtn.disabled = false;
+      }
+    }
+
+    generateBtn.addEventListener('click', () => {
+      callApi();
+    });
+
+    // 返信ボタン → クリップボードコピー
+    replyButtons.forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const text = btn.textContent || '';
+        if (!text || text.startsWith('返信候補')) return;
+
+        try {
+          await navigator.clipboard.writeText(text);
+          replyButtons.forEach((b) => b.classList.remove('copied'));
+          btn.classList.add('copied');
+          statusEl.textContent = '返信案をクリップボードにコピーしました。';
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = 'コピーに失敗しました。手動で選択してください。';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -5,8 +5,11 @@ from datetime import datetime
 from pathlib import Path
 import re
 
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from openai import OpenAI
 
@@ -18,6 +21,29 @@ app = FastAPI(
     description="LINEトーク要約＆返信生成API",
     version="0.1.0",
 )
+
+# プロジェクトルート / static パス
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
+
+# /static で静的ファイル配信
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def index():
+    """
+    シンプルなWeb UIを返す。
+    /backend/static/index.html が存在しなければメッセージだけ出す。
+    """
+    index_file = STATIC_DIR / "index.html"
+    if index_file.exists():
+        return index_file.read_text(encoding="utf-8")
+    return HTMLResponse(
+        "<h1>Talk Assist Backend</h1><p>static/index.html が配置されていません。</p>",
+        status_code=200,
+    )
 
 # CORS（Flutter Web や他クライアントも想定して緩めに許可）
 app.add_middleware(
