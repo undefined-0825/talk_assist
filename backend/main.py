@@ -6,28 +6,50 @@ from pathlib import Path
 import re
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from openai import OpenAI
 
-app = FastAPI()
+# ========== 
+# FastAPI アプリ 
+# ==========
+app = FastAPI(
+    title="Talk Assist API",
+    description="LINEトーク要約＆返信生成API",
+    version="0.1.0",
+)
 
+# CORS（Flutter Web や他クライアントも想定して緩めに許可）
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 本番で必要ならドメインを絞る
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ========== 
+# OpenAI クライアント 
 # ==========
-# OpenAI クライアント
-# ==========
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+api_key = os.environ.get("OPENAI_API_KEY")
+if not api_key:
+    # 起動時に気づけるように明示的に落とす
+    raise RuntimeError("OPENAI_API_KEY is not set in environment variables.")
+
+client = OpenAI(api_key=api_key)
 
 MODEL_NAME = "gpt-4.1-mini"
 
-# ==========
-# 長文対策用のしきい値
+# ========== 
+# 長文対策用のしきい値 
 # ==========
 # 生テキストのハード上限（これを超えたらまず頭+尻だけにトリム）
 MAX_RAW_CHARS = 8000
 # モデルに渡す文字数の目安
 MAX_USED_CHARS = 4000
 
-# ==========
-# ログ設定（簡易）
+# ========== 
+# ログ設定（簡易） 
 # ==========
 LOG_DIR = Path("logs")
 LOG_DIR.mkdir(exist_ok=True)
@@ -46,8 +68,8 @@ def write_log(record: dict) -> None:
         pass
 
 
-# ==========
-# モデル I/O 用型
+# ========== 
+# モデル I/O 用型 
 # ==========
 ToneLiteral = Literal["standard", "night", "business"]
 
@@ -62,12 +84,10 @@ class TalkResponse(BaseModel):
     replies: List[str]
 
 
-# ==========
-# プロンプト関連
+# ========== 
+# プロンプト関連 
 # ==========
 
-def build_tone_desc_and_temp(tone: ToneLiteral) -> Tuple[str, float]:
-    """トーン別のプロンプト説明と temperature を返す"""
 def build_tone_desc_and_temp(tone: ToneLiteral) -> Tuple[str, float]:
     """トーン別のプロンプト説明と temperature を返す"""
     if tone == "night":
@@ -196,8 +216,8 @@ def build_user_prompt(text: str, mode: str) -> str:
 """
 
 
-# ==========
-# 長文前処理
+# ========== 
+# 長文前処理 
 # ==========
 
 def summarize_conversation(raw_text: str, tone: ToneLiteral) -> str:
@@ -272,8 +292,8 @@ def preprocess_text(raw_text: str, tone: ToneLiteral) -> Tuple[str, str, int, in
     return used_text, mode, original_len, used_len
 
 
-# ==========
-# メインエンドポイント
+# ========== 
+# メインエンドポイント 
 # ==========
 
 def parse_ai_output(content: str) -> Tuple[str, List[str]]:
@@ -343,6 +363,12 @@ def parse_ai_output(content: str) -> Tuple[str, List[str]]:
     replies = replies[:3]
 
     return summary, replies
+
+
+@app.get("/health")
+async def health() -> dict:
+    """死活監視用エンドポイント"""
+    return {"status": "ok"}
 
 
 @app.post("/api/talk/assist", response_model=TalkResponse)
@@ -426,3 +452,13 @@ async def talk_assist(req: TalkRequest) -> TalkResponse:
             summary="（AI呼び出しに失敗しました。しばらく時間をおいて再度お試しください。）",
             replies=[],
         )
+
+
+# ========== 
+# ローカル実行用エントリポイント 
+# ==========
+if __name__ == "__main__":
+    import uvicorn
+
+    port = int(os.getenv("PORT", "8000"))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
