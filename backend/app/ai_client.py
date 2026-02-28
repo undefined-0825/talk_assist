@@ -1,7 +1,8 @@
-from app.config import settings
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from dataclasses import dataclass
+
+from app.config import settings
 
 
 @dataclass(frozen=True)
@@ -23,34 +24,26 @@ class AiClient:
 
 class DummyAiClient(AiClient):
     async def generate_abc(self, history_text: str, ctx: GenerateContext) -> list[str]:
-        # 本文保存なし。テンプレ過依存を避けるために軽く揺らす程度。
-        base = "了解だよ。"
-        rel = f"（関係:{ctx.relationship_type or 'unknown'}）"
-        length = ctx.reply_length_pref or "standard"
-        combo = ctx.combo_id
-        a = f"{base}{rel} 今日はどうする？無理ない範囲で、会えそうならサクッと予定合わせよ☺️"
-        b = f"{base} 返信ありがと。{rel} 今週どこかタイミング合う日ある？"
-        c = f"{base} {rel} もし今日いけるなら、軽く顔出してくれたら嬉しい。空いてる時間ある？"
+        # 起動確認用のダミー。内容は最小限でOK（受け入れ条件の本番生成は後続でAIクライアントに委譲）
+        rel = ctx.relationship_type or "unknown"
+        base = "了解！メッセージありがとう。"
+        a = f"{base}（A）関係: {rel}。今夜どうする？"
+        b = f"{base}（B）関係: {rel}。落ち着いたら電話できる？"
+        c = f"{base}（C）関係: {rel}。会える日また教えてね。"
 
-        if length == "long":
-            a += "\n\nこっちは落ち着いてるから、来れそうならで全然OK。来れないならまた別日で調整しよ。"
-            b += "\n\n無理せずで大丈夫！都合いい日だけ教えて。"
-            c += "\n\n今日が難しければ、候補日2つくらい投げてくれたら一番早いかも。"
+        if (ctx.reply_length_pref or "standard") == "long":
+            a += "\n\n今日はバタバタしてたけど、ちゃんと読んでるよ。無理ないタイミングで返してね。"
+            b += "\n\nちょっとだけ声聞けたら安心する。タイミング合う時で大丈夫。"
+            c += "\n\n予定が見えたら合わせるよ。無理なら無理って言ってね。"
 
         return [a, b, c]
 
-_ai_singleton: AiClient | None = None
-
 
 def get_ai_client() -> AiClient:
-    global _ai_singleton
-    if _ai_singleton is not None:
-        return _ai_singleton
-
-    if settings.ai_provider == "openai":
-        from app.ai_client_openai import OpenAiResponsesClient
-        _ai_singleton = OpenAiResponsesClient()
-        return _ai_singleton
-
-    _ai_singleton = DummyAiClient()
-    return _ai_singleton
+    # settings 側のスイッチに合わせて選択（既存設計に合わせて最低限）
+    provider = getattr(settings, "ai_provider", None) or getattr(settings, "AI_PROVIDER", None)
+    if provider and str(provider).lower() == "openai":
+        # 循環import回避のためローカルimport
+        from app.ai_client_openai import OpenAiClient
+        return OpenAiClient()
+    return DummyAiClient()

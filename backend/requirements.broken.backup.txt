@@ -1,0 +1,18 @@
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.27,<1.0
+
+# OpenAI（ImportError回避のため固定）
+openai==1.99.0
+
+# DB（Async SQLAlchemy + SQLite）
+SQLAlchemy>=2.0,<3.0
+aiosqlite>=0.19,<1.0
+
+# Redis（本番は必須 / 今はREDIS_DISABLEDでもimport要）
+redis>=5.0,<6.0
+
+# WindowsのZoneInfo対策（JST）
+tzdata>=2024.1
+
+# .envロード（設定運用用）
+python-dotenv>=1.0,<2.0
