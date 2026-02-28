@@ -1,1 +1,83 @@
-"backend/.env" 
+# =========================
+# Repo: talk_assist
+# Python(FastAPI) + Android + IDE
+# =========================
+
+# --- secrets ---
+backend/.env
+backend/.env.*
+!backend/.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+
+# --- python venv ---
+backend/.venv/
+.venv/
+venv/
+ENV/
+env/
+
+# --- python cache / bytecode ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- python tooling caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+coverage.xml
+htmlcov/
+.pyre/
+.pytype/
+
+# --- build / dist ---
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# --- logs ---
+*.log
+logs/
+
+# --- local db / runtime artifacts ---
+backend/permy.db
+backend/*.sqlite
+backend/*.sqlite3
+
+# local request bodies / test artifacts (conversation-like data)
+backend/body*.json
+*.tmp
+
+# --- backups / dumps ---
+backend_*/
+*.bak
+
+# --- accidental dirs ---
+git/
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Android / Gradle ---
+**/.gradle/
+**/build/
+**/.cxx/
+**/local.properties
+**/*.iml
+**/.idea/
+
+# Keystore (do not commit)
+**/*.jks
+**/*.keystore
